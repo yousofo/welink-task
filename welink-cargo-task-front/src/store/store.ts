@@ -1,5 +1,5 @@
 // stores/useAppStore.ts
-import { ICategory, IGate, IUser, IZone } from "@/lib/apiModels";
+import { ICategory, ICheckInSuccessResponse, IGate, IUser, IZone } from "@/lib/apiModels";
 import { create } from "zustand";
 
 //from localstorage
@@ -20,7 +20,12 @@ type AppState = {
   categories: ICategory[];
   zones: IZone[];
   gates: IGate[];
+  checkInSuccess: ICheckInSuccessResponse | null;
+  //
+  // actions
+  //
   setUser: (user: IUser) => void;
+  setCheckInSuccess: (checkInSuccess: ICheckInSuccessResponse | null) => void;
   setGates: (gates: IGate[]) => void;
   setZones: (zones: IZone[]) => void;
   updateZones: (updater: (zones: IZone[]) => IZone[]) => void;
@@ -35,7 +40,12 @@ export const useAppStore = create<AppState>((set,get) => ({
   categories: [],
   zones: [],
   gates: [],
+  checkInSuccess: null,
+  //
+  // actions
+  //
   setUser: (user) => set({ user }),
+  setCheckInSuccess: (checkInSuccess) => set({ checkInSuccess }),
   setGates: (gates) => set({ gates }),
   setZones: (zones) => set({ zones }),
   updateZones: (updater: (zones: IZone[]) => IZone[]) => {

@@ -1,9 +1,19 @@
 import { IZone } from "@/lib/apiModels";
+import { useCheckIn } from "@/services/api";
+import { useAppStore } from "@/store/store";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 function ZoneCard({ data }: { data: IZone }) {
+  const { mutate, isPending, isError, error } = useCheckIn();
+  const config = useAppStore((state) => state.config);
+
+  function chooseZone(zone: IZone) {
+    const gateId = config.currentGate ? config.currentGate.id : "";
+    mutate({ gateId, zoneId: zone.id, type: "visitor" , subscriptionId: ""});
+  }
+
   return (
     <div
       className="h-full relative p-3 rounded-md bg-[#3270c81f] dark:bg-[#0f1c2e63] border border-[#1c76de] dark:border-[#0d3868]
@@ -55,7 +65,9 @@ function ZoneCard({ data }: { data: IZone }) {
         </div> */}
       </section>
 
-      <button className="mt-6   py-2 px-2 w-full   bg-blue-300 dark:bg-blue-600 cursor-pointer text-sm font-semibold rounded leading-none  hover:bg-blue-400">Go</button>
+      <button onClick={() => chooseZone(data)} className="mt-6   py-2 px-2 w-full   bg-blue-300 dark:bg-blue-600 cursor-pointer text-sm font-semibold rounded leading-none  hover:bg-blue-400">
+        Go
+      </button>
     </div>
   );
 }

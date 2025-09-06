@@ -1,7 +1,7 @@
 "use client";
 // hooks/api/useZones.ts
 import { useFetch } from "@/hooks/useFetch";
-import { ICategory, IGate, IUser, IZone } from "../lib/apiModels";
+import { ICategory, ICheckInSuccessResponse, IGate, IUser, IZone } from "../lib/apiModels";
 import { useAppStore } from "@/store/store";
 import { useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -141,4 +141,17 @@ export function useGateZones(gateId: string) {
   }, [wsClient.status, data?.length]);
 
   return { zones, isSuccess, isLoading };
+}
+
+export function useCheckIn() {
+  const { setCheckInSuccess } = useAppStore((s) => s);
+
+  return useMutation({
+    mutationFn: async ({ gateId, zoneId, type, subscriptionId }: { gateId: string; zoneId: string; type: "visitor" | "subscriber"; subscriptionId?: string }) => {
+      return fetcher<ICheckInSuccessResponse>("/tickets/checkin", { method: "POST", body: JSON.stringify({ gateId, zoneId, type, subscriptionId }) });
+    },
+    onSuccess(data, variables, context) {
+      setCheckInSuccess(data);
+    },
+  });
 }
