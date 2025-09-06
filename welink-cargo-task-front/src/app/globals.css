@@ -23,7 +23,28 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  button{
+  button {
     cursor: pointer;
   }
+}
+
+
+@media print {
+  .print-wrapper{
+    background-color: white;
+    z-index: 9999999999;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+  }
+  .noprint {
+    display: none;
+  }
+ 
 }

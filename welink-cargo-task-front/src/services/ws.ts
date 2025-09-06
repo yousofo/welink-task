@@ -72,6 +72,7 @@ class WSClient {
 
   onMessage(cb: (msg: WSMessage) => void) {
     this.listeners.push(cb);
+    // return unsubscribe function
     return () => {
       this.listeners = this.listeners.filter((fn) => fn !== cb);
     };

@@ -26,7 +26,6 @@ export function useMasterZones() {
 
   useEffect(() => {
     if (isSuccess && data) {
-      console.log("zones: ", data);
       setZones(data);
     }
   }, [data, isSuccess, setZones]);
@@ -46,7 +45,6 @@ export function useMasterCategories() {
 
   useEffect(() => {
     if (isSuccess && data) {
-      console.log("categories: ", data);
       setCategories(data);
     }
   }, [data, isSuccess, setCategories]);
@@ -66,7 +64,6 @@ export function useGates() {
 
   useEffect(() => {
     if (isSuccess && data) {
-      console.log("gates: ", data);
       setGates(data);
     }
   }, [data, isSuccess, setGates]);
@@ -82,14 +79,15 @@ export function useLogin() {
     mutationFn: async (loginData: { username: string; password: string }) => {
       const username = loginData.username.trim();
       const password = loginData.password.trim();
-      console.log("logging in", username, password);
       if (username === "" || password === "") throw new Error("Please enter username and password.");
 
-      return fetcher<IUser>("/auth/login", { method: "POST", body: JSON.stringify({ username, password }) });
+      return fetcher<IUser>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+      });
     },
     onSuccess(data, variables, context) {
       setUser(data);
-      console.log("logged in", data);
       localStorage.setItem("token", data.token);
       router.push("/gates");
     },
@@ -97,6 +95,7 @@ export function useLogin() {
 }
 
 export function useGateZones(gateId: string) {
+  //
   const { setZones, zones, updateZones } = useAppStore((s) => s);
   const { data, isLoading, isSuccess } = useFetch<IZone[]>({
     queryKey: [`gate${gateId}/zones`],
@@ -114,7 +113,6 @@ export function useGateZones(gateId: string) {
       if (msg.type === "zone-update") {
         const receivedUpdatedZone = msg.payload as IZone;
         updateZones((currentZones: IZone[]) => {
-          console.log("old zones:", currentZones);
           const oldZoneIx = currentZones.findIndex((zone) => zone.id === receivedUpdatedZone.id);
 
           if (oldZoneIx !== -1) {
@@ -130,15 +128,24 @@ export function useGateZones(gateId: string) {
 
   const didRun = useRef(false);
   useEffect(() => {
-    if (wsClient.status === WebSocketStatusEnum.OPEN && (data?.length ?? 0 > 0)) {
-      if (didRun.current) return;
-      didRun.current = true;
-      wsClient.onMessage(onMessage);
-      wsClient.subscribe(gateId);
+    const prevGate: IGate | null = localStorage.getItem("gate") ? JSON.parse(localStorage.getItem("gate") as string) : null;
+    let unsubscribeFn = () => {};
+    if (wsClient.status === WebSocketStatusEnum.OPEN && gateId) {
+      if (wsClient.status === WebSocketStatusEnum.OPEN && prevGate?.id !== gateId) {
+        wsClient.unsubscribe(prevGate?.id as string);
+      } else {
+        wsClient.subscribe(gateId);
+      }
+      unsubscribeFn = wsClient.onMessage(onMessage);
     }
 
-    return () => wsClient.unsubscribe(gateId);
-  }, [wsClient.status, data?.length]);
+    return () => {
+      if (wsClient.status === WebSocketStatusEnum.OPEN && prevGate?.id !== gateId) {
+        unsubscribeFn();
+        wsClient.unsubscribe(prevGate?.id as string);
+      }
+    };
+  }, [wsClient.status, gateId]);
 
   return { zones, isSuccess, isLoading };
 }
@@ -147,8 +154,21 @@ export function useCheckIn() {
   const { setCheckInSuccess } = useAppStore((s) => s);
 
   return useMutation({
-    mutationFn: async ({ gateId, zoneId, type, subscriptionId }: { gateId: string; zoneId: string; type: "visitor" | "subscriber"; subscriptionId?: string }) => {
-      return fetcher<ICheckInSuccessResponse>("/tickets/checkin", { method: "POST", body: JSON.stringify({ gateId, zoneId, type, subscriptionId }) });
+    mutationFn: async ({
+      gateId,
+      zoneId,
+      type,
+      subscriptionId,
+    }: {
+      gateId: string;
+      zoneId: string;
+      type: "visitor" | "subscriber";
+      subscriptionId?: string;
+    }) => {
+      return fetcher<ICheckInSuccessResponse>("/tickets/checkin", {
+        method: "POST",
+        body: JSON.stringify({ gateId, zoneId, type, subscriptionId }),
+      });
     },
     onSuccess(data, variables, context) {
       setCheckInSuccess(data);

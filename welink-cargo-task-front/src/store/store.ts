@@ -51,7 +51,6 @@ export const useAppStore = create<AppState>((set,get) => ({
   updateZones: (updater: (zones: IZone[]) => IZone[]) => {
     const currentZones = get().zones;
     const newZones = updater(currentZones);
-    console.log("newZones", newZones);
     set({ zones: newZones });
   },
   setCategories: (categories) => set({ categories }),

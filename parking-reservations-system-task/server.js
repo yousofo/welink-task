@@ -154,7 +154,7 @@ setInterval(() => {
       }
     });
   });
-}, 1000);
+}, 10000);
 
 function wsBroadcastZoneUpdate(zoneId) {
   const zone = db.zones.find((z) => z.id === zoneId);

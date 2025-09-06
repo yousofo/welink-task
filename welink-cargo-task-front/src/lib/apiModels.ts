@@ -47,33 +47,32 @@ export interface IError {
   [key: string]: string[];
 }
 
-
 export interface ICheckInSuccessResponse {
-  ticket: ITicket
-  zoneState:IZoneState
+  ticket: ITicket;
+  zoneState: IZoneState;
 }
 
 export interface ITicket {
-  id: string
-  type: string
-  zoneId: string
-  gateId: string
-  checkinAt: string
-  checkoutAt: any
+  id: string;
+  type: string;
+  zoneId: string;
+  gateId: string;
+  checkinAt: string;
+  checkoutAt: any;
 }
 
 export interface IZoneState {
-  id: string
-  name: string
-  categoryId: string
-  gateIds: string[]
-  totalSlots: number
-  occupied: number
-  free: number
-  reserved: number
-  availableForVisitors: number
-  availableForSubscribers: number
-  rateNormal: number
-  rateSpecial: number
-  open: boolean
+  id: string;
+  name: string;
+  categoryId: string;
+  gateIds: string[];
+  totalSlots: number;
+  occupied: number;
+  free: number;
+  reserved: number;
+  availableForVisitors: number;
+  availableForSubscribers: number;
+  rateNormal: number;
+  rateSpecial: number;
+  open: boolean;
 }

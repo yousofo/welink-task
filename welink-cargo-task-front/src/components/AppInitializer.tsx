@@ -21,6 +21,8 @@ function AppInitializer() {
     }
   }, []);
 
+  
+
   return null;
 }
 

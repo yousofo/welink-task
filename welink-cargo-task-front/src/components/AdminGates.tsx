@@ -13,7 +13,6 @@ function AdminGates() {
  
     setConfig({ userMode: config.userMode, currentGate: gate });
   
-    localStorage.setItem("gate", JSON.stringify(gate));
   }
 
  

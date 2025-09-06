@@ -9,14 +9,9 @@ import { useAppStore } from "@/store/store";
 function MasterZones({ gateId }: { gateId: string }) {
   const { zones, isSuccess } = useGateZones(gateId);
   const { setZones } = useAppStore((s) => s);
-  // useWebSocket("gate_1"); // subscribe to gate_1
 
   useEffect(() => {
-    // if (isSuccess && zones) {
-    // setZones(zones);
 
-    // }
-    console.log("MasterZones: ", zones);
   }, [zones, gateId]);
 
   return (
