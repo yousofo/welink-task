@@ -1,7 +1,7 @@
 "use client";
 
 import { useMasterCategories, useMasterZones } from "@/services/api";
-import { wsClient } from "@/services/ws";
+import { WebSocketStatusEnum, wsClient } from "@/services/ws";
 import { useAppStore } from "@/store/store";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -9,19 +9,21 @@ import { useEffect } from "react";
 function AppInitializer() {
   const router = useRouter();
   const pathname = usePathname();
-  const config = useAppStore((state) => state.config);
-  
+  const { config, setConfig } = useAppStore((state) => state);
+
   useMasterCategories();
   useEffect(() => {
-    wsClient.connect();
-    if (!localStorage.getItem("token") && !config.currentGate) {
-      router.push("/login");
-    }else if (config.currentGate) {
-      router.push("/gates/"+config.currentGate.id);
+    if (wsClient.status === WebSocketStatusEnum.CLOSED) {
+      setConfig({ ...config, currentGate: null });
     }
-  }, []);
+    if (wsClient.status !== WebSocketStatusEnum.OPEN && wsClient.status !== WebSocketStatusEnum.CONNECTING) {
+      wsClient.connect();
+    }
 
-  
+    //commented this for testing purposes
+    //todo: check
+    // return () => wsClient.disconnect();
+  }, [wsClient.status]);
 
   return null;
 }

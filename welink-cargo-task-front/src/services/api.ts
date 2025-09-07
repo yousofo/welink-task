@@ -1,7 +1,7 @@
 "use client";
 // hooks/api/useZones.ts
 import { useFetch } from "@/hooks/useFetch";
-import { ICategory, ICheckInSuccessResponse, IGate, IUser, IZone } from "../lib/apiModels";
+import { ICategory, ICheckInSuccessResponse, IGate, ISubscription, IUser, IZone } from "../lib/apiModels";
 import { useAppStore } from "@/store/store";
 import { useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -88,13 +88,13 @@ export function useLogin() {
     },
     onSuccess(data, variables, context) {
       setUser(data);
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
       router.push("/gates");
     },
   });
 }
 
-export function useGateZones(gateId: string) {
+export function useGateZones(gateId: string, gate: IGate) {
   //
   const { setZones, zones, updateZones } = useAppStore((s) => s);
   const { data, isLoading, isSuccess } = useFetch<IZone[]>({
@@ -126,12 +126,12 @@ export function useGateZones(gateId: string) {
     [setZones]
   );
 
-  const didRun = useRef(false);
   useEffect(() => {
     const prevGate: IGate | null = localStorage.getItem("gate") ? JSON.parse(localStorage.getItem("gate") as string) : null;
+    localStorage.setItem("gate", JSON.stringify({...gate, id: gateId}));
     let unsubscribeFn = () => {};
     if (wsClient.status === WebSocketStatusEnum.OPEN && gateId) {
-      if (wsClient.status === WebSocketStatusEnum.OPEN && prevGate?.id !== gateId) {
+      if (prevGate?.id !== gateId) {
         wsClient.unsubscribe(prevGate?.id as string);
       } else {
         wsClient.subscribe(gateId);
@@ -172,6 +172,20 @@ export function useCheckIn() {
     },
     onSuccess(data, variables, context) {
       setCheckInSuccess(data);
+    },
+  });
+}
+
+//use { status: string; message: string } as error
+export function useValidateSubscription() {
+  const { setSubscription } = useAppStore((s) => s);
+
+  return useMutation<ISubscription, { status: string; message: string }, { id: string }>({
+    mutationFn: async ({ id }: { id: string }) => {
+      return fetcher<any>("/subscriptions/" + id);
+    },
+    onSuccess(data, variables, context) {
+      setSubscription(data);
     },
   });
 }

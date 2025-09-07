@@ -76,3 +76,22 @@ export interface IZoneState {
   rateSpecial: number;
   open: boolean;
 }
+
+export interface ISubscription {
+  id: string;
+  userName: string;
+  active: boolean;
+  categories: string[];
+  category: string;
+  cars: ICar[];
+  startsAt: string;
+  expiresAt: string;
+  currentCheckins: any[];
+}
+
+export interface ICar {
+  plate: string;
+  brand: string;
+  model: string;
+  color: string;
+}

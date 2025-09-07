@@ -9,7 +9,7 @@ class WSClient {
   private socket: WebSocket | null = null;
   private listeners: ((msg: WSMessage) => void)[] = [];
   private url: string;
-  status: WebSocketStatusEnum = 0;
+  status: WebSocketStatusEnum = WebSocketStatusEnum.CLOSED;
 
   constructor(url: string) {
     console.log("Init WSClient", url);
@@ -17,11 +17,11 @@ class WSClient {
   }
 
   connect() {
-
+    console.log("connect ws");
     if (this.socket) return;
     this.status = WebSocketStatusEnum.CONNECTING;
     this.socket = new WebSocket(this.url);
-
+    
     this.socket.onopen = () => {
       this.status = WebSocketStatusEnum.OPEN;
       console.log("webSocket connected");
@@ -37,6 +37,7 @@ class WSClient {
     };
 
     this.socket.onclose = () => {
+      this.status = WebSocketStatusEnum.CLOSED;
       console.warn("webSocket closed");
       this.socket = null;
       setTimeout(() => this.connect(), 3000); // auto-reconnect

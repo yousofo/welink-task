@@ -1,9 +1,10 @@
+"use client";
 // stores/useAppStore.ts
-import { ICategory, ICheckInSuccessResponse, IGate, IUser, IZone } from "@/lib/apiModels";
+import { ICategory, ICheckInSuccessResponse, IGate, ISubscription, IUser, IZone } from "@/lib/apiModels";
 import { create } from "zustand";
 
 //from localstorage
-function getItem<T>(key: string) {
+export function getItem<T>(key: string) {
   if (typeof window === "undefined") return null;
   const item = localStorage.getItem(key);
   return item ? (JSON.parse(item) as T) : null;
@@ -12,12 +13,14 @@ function getItem<T>(key: string) {
 interface IAppStateConfig {
   userMode: "visitor" | "subscriber";
   currentGate: IGate | null;
+  isConnected: boolean;
 }
 
 type AppState = {
   user: IUser | null;
   config: IAppStateConfig;
   categories: ICategory[];
+  subscription: ISubscription | null;
   zones: IZone[];
   gates: IGate[];
   checkInSuccess: ICheckInSuccessResponse | null;
@@ -25,6 +28,7 @@ type AppState = {
   // actions
   //
   setUser: (user: IUser) => void;
+  setSubscription: (subscriptionId: ISubscription | null) => void;
   setCheckInSuccess: (checkInSuccess: ICheckInSuccessResponse | null) => void;
   setGates: (gates: IGate[]) => void;
   setZones: (zones: IZone[]) => void;
@@ -34,17 +38,20 @@ type AppState = {
   reset: () => void;
 };
 
-export const useAppStore = create<AppState>((set,get) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   user: getItem<IUser>("user"),
-  config: { userMode: "visitor", currentGate: getItem<IGate>("gate") },
+  config: { userMode: "visitor", isConnected: false, currentGate: getItem<IGate>("gate") },
   categories: [],
+  subscription: null,
   zones: [],
   gates: [],
   checkInSuccess: null,
+  error: null,
   //
   // actions
   //
   setUser: (user) => set({ user }),
+  setSubscription: (subscription) => set({ subscription }),
   setCheckInSuccess: (checkInSuccess) => set({ checkInSuccess }),
   setGates: (gates) => set({ gates }),
   setZones: (zones) => set({ zones }),

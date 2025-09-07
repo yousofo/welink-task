@@ -1,7 +1,7 @@
 import CheckInSuccess from "@/components/CheckInSuccess";
 import GateHeader from "@/components/GateHeader";
 import MasterZones from "@/components/MasterZones";
-import { useFetch } from "@/hooks/useFetch";
+import SubscriberValidationModal from "@/components/SubscriberValidationModal";
 
 async function Gate({ params }: { params: { gateId: string } }) {
   // const { data, isLoading, error } = useFetch<{ id: number; title: string }[]>({
@@ -14,10 +14,11 @@ async function Gate({ params }: { params: { gateId: string } }) {
     <>
       <GateHeader />
       <main className="container mx-auto p-4">
-        <MasterZones gateId={id} />
+        <MasterZones  gateId={id} />
       </main>
 
       {/* after zone checkin success */}
+      <SubscriberValidationModal />
       <CheckInSuccess />
     </>
   );
