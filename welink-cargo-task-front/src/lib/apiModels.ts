@@ -28,9 +28,9 @@ export interface IGate {
   location: string;
 }
 
-export interface IUser {
+export interface IUserData {
   token: string;
-  data: {
+  user: {
     id: any;
     userName: string;
     role: string;

@@ -3,15 +3,15 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export function useRequireAuth() {
-  const { user } = useAppStore((s) => s);
+  const { userData } = useAppStore((s) => s);
 
   const { push } = useRouter();
 
   useEffect(() => {
-    if (!user?.token) {
+    if (!userData?.token) {
       push("/login");
     }
-  }, [user?.token]);
+  }, [userData?.token]);
 
-  return !!user?.token;
+  return !!userData?.token;
 }

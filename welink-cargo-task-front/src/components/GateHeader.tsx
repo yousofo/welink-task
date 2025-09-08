@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
 
 function GateHeader() {
-  const { config, setConfig ,user} = useAppStore((state) => state);
+  const { config, setConfig, userData } = useAppStore((state) => state);
   const pathname = usePathname();
   const { userMode, currentGate } = config;
   const connected = true;
@@ -18,18 +18,16 @@ function GateHeader() {
     setConfig({ ...config, userMode });
   }
 
-
   useEffect(() => {
     console.log(pathname);
   }, [pathname]);
 
-
-  const isAdmin = user?.data.role.toLowerCase() === "admin";
+  const isAdmin = userData?.user.role.toLowerCase() === "admin";
 
   return (
-    <header className="container mx-auto flex items-center justify-between p-4 border-b">
+    <header className="container mx-auto flex flex-col gap-4 sm:flex-row items-center justify-between p-4 border-b">
       <div className="flex items-center gap-4">
-        <h2 suppressHydrationWarning>{config.currentGate?.name || "Gate"}</h2>
+        <h2 suppressHydrationWarning>{config.currentGate?.name}</h2>
         <p className={connected ? "text-green-400" : "text-red-400"}>({connected ? "Connected" : "Disconnected"})</p>
       </div>
       <div className="flex items-center">
@@ -42,12 +40,16 @@ function GateHeader() {
           </button>
         </div>
         <div className="h-full border-s border-gray-300 dark:border-gray-600/50 ps-3 ms-3">
-        {
-          
-        }
-          <Link href="/dashboard" className="underline ">
-            Login
-          </Link>
+          {isAdmin && (
+            <Link href="/admin" className="underline">
+              Dashboard
+            </Link>
+          )}
+          {!userData && (
+            <Link href="/dashboard" className="underline ">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </header>

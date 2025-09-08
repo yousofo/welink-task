@@ -7,10 +7,11 @@ export async function fetcher<T>(url: string, options?: RequestInit & { auth?: b
   // };
 
   if (options?.auth) {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (token) {
+    const userJson = localStorage.getItem("user");
+    const user = userJson ? JSON.parse(userJson) : null;
+    if (user) {
       // headers["Authorization"] = `Bearer ${token}`;
-      Object.assign(options, { headers: { Authorization: `Bearer ${token}` } });
+      Object.assign(options, { headers: { Authorization: `Bearer ${user.token}` } });
     }
   }
 

@@ -1,7 +1,7 @@
 "use client";
 // hooks/api/useZones.ts
 import { useFetch } from "@/hooks/useFetch";
-import { ICategory, ICheckInSuccessResponse, IGate, ISubscription, IUser, IZone } from "../lib/apiModels";
+import { ICategory, ICheckInSuccessResponse, IGate, ISubscription, IUserData, IZone } from "../lib/apiModels";
 import { useAppStore } from "@/store/store";
 import { useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -72,7 +72,7 @@ export function useGates() {
 }
 
 export function useLogin() {
-  const setUser = useAppStore((s) => s.setUser);
+  const setUser = useAppStore((s) => s.setUserData);
   const router = useRouter();
 
   return useMutation({
@@ -81,7 +81,7 @@ export function useLogin() {
       const password = loginData.password.trim();
       if (username === "" || password === "") throw new Error("Please enter username and password.");
 
-      return fetcher<IUser>("/auth/login", {
+      return fetcher<IUserData>("/auth/login", {
         method: "POST",
         body: JSON.stringify({ username, password }),
       });
@@ -128,7 +128,7 @@ export function useGateZones(gateId: string, gate: IGate) {
 
   useEffect(() => {
     const prevGate: IGate | null = localStorage.getItem("gate") ? JSON.parse(localStorage.getItem("gate") as string) : null;
-    localStorage.setItem("gate", JSON.stringify({...gate, id: gateId}));
+    localStorage.setItem("gate", JSON.stringify({ ...gate, id: gateId }));
     let unsubscribeFn = () => {};
     if (wsClient.status === WebSocketStatusEnum.OPEN && gateId) {
       if (prevGate?.id !== gateId) {
@@ -154,17 +154,7 @@ export function useCheckIn() {
   const { setCheckInSuccess } = useAppStore((s) => s);
 
   return useMutation({
-    mutationFn: async ({
-      gateId,
-      zoneId,
-      type,
-      subscriptionId,
-    }: {
-      gateId: string;
-      zoneId: string;
-      type: "visitor" | "subscriber";
-      subscriptionId?: string;
-    }) => {
+    mutationFn: async ({ gateId, zoneId, type, subscriptionId }: { gateId: string; zoneId: string; type: "visitor" | "subscriber"; subscriptionId?: string }) => {
       return fetcher<ICheckInSuccessResponse>("/tickets/checkin", {
         method: "POST",
         body: JSON.stringify({ gateId, zoneId, type, subscriptionId }),
@@ -186,6 +176,28 @@ export function useValidateSubscription() {
     },
     onSuccess(data, variables, context) {
       setSubscription(data);
+    },
+  });
+}
+
+//
+//
+//
+//
+//
+//admin dashboard
+//
+export function useToggleZone() {
+  return useMutation({
+    mutationFn: async ({ open, zoneId }: { open: boolean; zoneId: string }) => {
+      return fetcher<{ zoneId: any; open: boolean }>("/admin/zones/" + zoneId + "/open", {
+        method: "PUT",
+        body: JSON.stringify({ open }),
+        auth: true,
+      });
+    },
+    onSuccess(data, variables, context) {
+      //setCheckInSuccess(data);
     },
   });
 }

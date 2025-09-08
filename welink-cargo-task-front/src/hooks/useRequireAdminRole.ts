@@ -1,17 +1,21 @@
 import { useAppStore } from "@/store/store";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function useRequireAdminRole() {
-  const { user } = useAppStore((s) => s);
-
+  const { userData } = useAppStore((s) => s);
+  const [mounted, setMounted] = useState(false);
   const { push } = useRouter();
 
   useEffect(() => {
-    if (user?.data.role.toLowerCase() !== "admin") {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && userData?.user.role.toLowerCase() !== "admin") {
       push("/login");
     }
-  }, [user?.data.role]);
+  }, [userData?.user.role, mounted]);
 
-  return user?.data.role.toLowerCase() === "admin";
+  return userData?.user.role.toLowerCase() === "admin";
 }

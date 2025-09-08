@@ -1,7 +1,8 @@
 "use client";
 // stores/useAppStore.ts
-import { ICategory, ICheckInSuccessResponse, IGate, ISubscription, IUser, IZone } from "@/lib/apiModels";
+import { ICategory, ICheckInSuccessResponse, IGate, ISubscription, IUserData, IZone } from "@/lib/apiModels";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 //from localstorage
 export function getItem<T>(key: string) {
@@ -17,7 +18,7 @@ interface IAppStateConfig {
 }
 
 type AppState = {
-  user: IUser | null;
+  userData: IUserData | null;
   config: IAppStateConfig;
   categories: ICategory[];
   subscription: ISubscription | null;
@@ -27,7 +28,7 @@ type AppState = {
   //
   // actions
   //
-  setUser: (user: IUser) => void;
+  setUserData: (userData: IUserData) => void;
   setSubscription: (subscriptionId: ISubscription | null) => void;
   setCheckInSuccess: (checkInSuccess: ICheckInSuccessResponse | null) => void;
   setGates: (gates: IGate[]) => void;
@@ -38,29 +39,40 @@ type AppState = {
   reset: () => void;
 };
 
-export const useAppStore = create<AppState>((set, get) => ({
-  user: getItem<IUser>("user"),
-  config: { userMode: "visitor", isConnected: false, currentGate: getItem<IGate>("gate") },
-  categories: [],
-  subscription: null,
-  zones: [],
-  gates: [],
-  checkInSuccess: null,
-  error: null,
-  //
-  // actions
-  //
-  setUser: (user) => set({ user }),
-  setSubscription: (subscription) => set({ subscription }),
-  setCheckInSuccess: (checkInSuccess) => set({ checkInSuccess }),
-  setGates: (gates) => set({ gates }),
-  setZones: (zones) => set({ zones }),
-  updateZones: (updater: (zones: IZone[]) => IZone[]) => {
-    const currentZones = get().zones;
-    const newZones = updater(currentZones);
-    set({ zones: newZones });
-  },
-  setCategories: (categories) => set({ categories }),
-  setConfig: (config) => set({ config }),
-  reset: () => set({ user: null }),
-}));
+export const useAppStore = create<AppState>()(
+  persist(
+    (set, get) => ({
+      userData: null,
+      config: { userMode: "visitor", isConnected: false, currentGate: null },
+      categories: [],
+      subscription: null,
+      zones: [],
+      gates: [],
+      checkInSuccess: null,
+      error: null,
+
+      // actions
+      setUserData: (userData) => set({ userData }),
+      setSubscription: (subscription) => set({ subscription }),
+      setCheckInSuccess: (checkInSuccess) => set({ checkInSuccess }),
+      setGates: (gates) => set({ gates }),
+      setZones: (zones) => set({ zones }),
+      updateZones: (updater) => {
+        const currentZones = get().zones;
+        const newZones = updater(currentZones);
+        set({ zones: newZones });
+      },
+      setCategories: (categories) => set({ categories }),
+      setConfig: (config) => set({ config }),
+      reset: () => set({ userData: null, config: { userMode: "visitor", isConnected: false, currentGate: null } }),
+    }),
+    {
+      name: "app-storage", 
+      partialize: (state) => ({
+        userData: state.userData,
+        config: state.config,
+        gates: state.gates,
+      }),
+    }
+  )
+);

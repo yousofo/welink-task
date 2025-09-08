@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import AppInitializer from "@/components/AppInitializer";
+import ErrorModal from "@/components/ErrorModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <AppInitializer />
           {children}
+          <ErrorModal/>
           <LoadingIndicator />
         </ReactQueryProvider>
       </body>
