@@ -28,7 +28,7 @@ type AppState = {
   //
   // actions
   //
-  setUserData: (userData: IUserData) => void;
+  setUserData: (userData: IUserData | null) => void;
   setSubscription: (subscriptionId: ISubscription | null) => void;
   setCheckInSuccess: (checkInSuccess: ICheckInSuccessResponse | null) => void;
   setGates: (gates: IGate[]) => void;

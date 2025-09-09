@@ -9,10 +9,10 @@ export function useRequireGateId() {
   const { push } = useRouter();
 
   useEffect(() => {
-    const gateId = JSON.parse(localStorage.getItem("gate")!)?.id;
-    setGate(gateId);
-    if (!gateId) {
-      push("/login");
+    const gate = JSON.parse(localStorage.getItem("gate")!);
+    setGate(gate);
+    if (!gate) {
+      // push("/login");
     }
   }, [storeGate?.id]);
 

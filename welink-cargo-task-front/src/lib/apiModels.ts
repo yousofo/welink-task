@@ -95,3 +95,21 @@ export interface ICar {
   model: string;
   color: string;
 }
+export interface ICheckoutResponse {
+  ticketId: string
+  checkinAt: string
+  checkoutAt: string
+  durationHours: number
+  breakdown: IBreakdown[]
+  amount: number
+  zoneState: string
+}
+
+export interface IBreakdown {
+  from: string
+  to: string
+  hours: number
+  rateMode: string
+  rate: number
+  amount: number
+}

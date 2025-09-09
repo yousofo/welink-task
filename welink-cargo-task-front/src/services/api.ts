@@ -1,7 +1,7 @@
 "use client";
 // hooks/api/useZones.ts
 import { useFetch } from "@/hooks/useFetch";
-import { ICategory, ICheckInSuccessResponse, IGate, ISubscription, IUserData, IZone } from "../lib/apiModels";
+import { ICategory, ICheckInSuccessResponse, ICheckoutResponse, IGate, ISubscription, IUserData, IZone } from "../lib/apiModels";
 import { useAppStore } from "@/store/store";
 import { useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -22,7 +22,7 @@ export function useMasterZones() {
 
   const { data, isSuccess } = query;
 
-  const setZones = useAppStore((s) => s.setZones);
+  const { zones, setZones } = useAppStore((s) => s);
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -30,7 +30,7 @@ export function useMasterZones() {
     }
   }, [data, isSuccess, setZones]);
 
-  return query;
+  return zones;
 }
 
 export function useMasterCategories() {
@@ -89,13 +89,18 @@ export function useLogin() {
     onSuccess(data, variables, context) {
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
-      router.push("/gates");
+
+      if (data.user.role === "admin") {
+        router.push("/dashboard/control-panel");
+      } else if (data.user.role === "employee") {
+        router.push("/gates");
+      }
+      //remain on login page if no role from above is found
     },
   });
 }
 
 export function useGateZones(gateId: string, gate: IGate) {
-  //
   const { setZones, zones, updateZones } = useAppStore((s) => s);
   const { data, isLoading, isSuccess } = useFetch<IZone[]>({
     queryKey: [`gate${gateId}/zones`],
@@ -110,7 +115,7 @@ export function useGateZones(gateId: string, gate: IGate) {
 
   const onMessage = useCallback(
     (msg: WSMessage) => {
-      if (msg.type === "zone-update") {
+      if (msg.type === "zone-update" || msg.type === "admin-update") {
         const receivedUpdatedZone = msg.payload as IZone;
         updateZones((currentZones: IZone[]) => {
           const oldZoneIx = currentZones.findIndex((zone) => zone.id === receivedUpdatedZone.id);
@@ -188,6 +193,8 @@ export function useValidateSubscription() {
 //admin dashboard
 //
 export function useToggleZone() {
+  const { zones, setZones } = useAppStore((s) => s);
+
   return useMutation({
     mutationFn: async ({ open, zoneId }: { open: boolean; zoneId: string }) => {
       return fetcher<{ zoneId: any; open: boolean }>("/admin/zones/" + zoneId + "/open", {
@@ -197,7 +204,18 @@ export function useToggleZone() {
       });
     },
     onSuccess(data, variables, context) {
-      //setCheckInSuccess(data);
+      setZones(zones.map((zone) => (zone.id === data.zoneId ? { ...zone, open: data.open } : zone)));
+    },
+  });
+}
+
+export function useCheckout() {
+  return useMutation({
+    mutationFn: async (data: { ticketId: string; forceConvertToVisitor: boolean }) => {
+      return fetcher<ICheckoutResponse>("/tickets/checkout", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     },
   });
 }

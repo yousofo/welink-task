@@ -7,7 +7,7 @@ import React from "react";
 
 function ZoneCard({ data, userMode }: { data: IZone; userMode: "visitor" | "subscriber" }) {
   const { mutate, isPending, isError, error } = useCheckIn();
-  const { config, subscription } = useAppStore((state) => state);
+  const { config, subscription, userData } = useAppStore((state) => state);
 
   const isVisitor = userMode === "visitor";
 
@@ -72,13 +72,11 @@ function ZoneCard({ data, userMode }: { data: IZone; userMode: "visitor" | "subs
             <li>special: {data.rateSpecial}</li>
           </ul>
         </div> */}
-
-      <button
-        onClick={() => chooseZone(data)}
-        className="   py-2 px-2 w-full   bg-blue-300 dark:bg-blue-600 cursor-pointer text-sm font-semibold rounded leading-none  hover:bg-blue-400"
-      >
-        Go
-      </button>
+      {!userData && (
+        <button onClick={() => chooseZone(data)} className="   py-2 px-2 w-full   bg-blue-300 dark:bg-blue-600 cursor-pointer text-sm font-semibold rounded leading-none  hover:bg-blue-400">
+          Go
+        </button>
+      )}
     </div>
   );
 }

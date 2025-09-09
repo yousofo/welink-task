@@ -3,19 +3,16 @@
 import { useMasterCategories, useMasterZones } from "@/services/api";
 import { WebSocketStatusEnum, wsClient } from "@/services/ws";
 import { useAppStore } from "@/store/store";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+ import { useEffect } from "react";
 
 function AppInitializer() {
-  const router = useRouter();
-  const pathname = usePathname();
   const { config, setConfig } = useAppStore((state) => state);
 
   useMasterCategories();
   useEffect(() => {
-    if (wsClient.status === WebSocketStatusEnum.CLOSED) {
-      setConfig({ ...config, currentGate: null });
-    }
+    // if (wsClient.status === WebSocketStatusEnum.CLOSED) {
+    //   setConfig({ ...config, currentGate: null });
+    // }
     if (wsClient.status !== WebSocketStatusEnum.OPEN && wsClient.status !== WebSocketStatusEnum.CONNECTING) {
       wsClient.connect();
     }

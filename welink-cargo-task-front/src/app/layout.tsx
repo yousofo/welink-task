@@ -5,6 +5,8 @@ import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import AppInitializer from "@/components/AppInitializer";
 import ErrorModal from "@/components/ErrorModal";
+import Redirecter from "@/components/Redirecter";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +33,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ReactQueryProvider>
           <AppInitializer />
+          <Redirecter />
+
           {children}
-          <ErrorModal/>
           <LoadingIndicator />
         </ReactQueryProvider>
       </body>

@@ -4,7 +4,7 @@ import { useMasterZones, useToggleZone } from "@/services/api";
 import React from "react";
 
 function AdminZones() {
-  const { data } = useMasterZones();
+  const zones = useMasterZones();
   const { mutate } = useToggleZone();
 
   function handleToggleZone(open: boolean, zoneId: string) {
@@ -31,7 +31,7 @@ function AdminZones() {
         </tr>
       </thead>
       <tbody>
-        {data?.map((zone: IZone) => (
+        {zones?.map((zone: IZone) => (
           <tr className="hover:bg-gray-100/10" key={zone.id}>
             <td>{zone.id}</td>
             <td>{zone.name}</td>
@@ -46,7 +46,7 @@ function AdminZones() {
             <td>{zone.rateNormal}</td>
             <td>{zone.rateSpecial}</td>
             <td className="">
-              <div onClick={() => handleToggleZone(!zone.open, zone.id)} className={"px-2 text-sm mx-auto py-0.5 rounded-lg border w-fit " + (zone.open ? "bg-green-500/10 border-green-500" : "bg-red-500/10 border-red-500")}>
+              <div onClick={() => handleToggleZone(!zone.open, zone.id)} className={"px-2 hover:scale-105 hover:opacity-90 cursor-pointer text-sm mx-auto py-0.5 rounded-lg border w-fit " + (zone.open ? "bg-green-500/10 border-green-500" : "bg-red-500/10 border-red-500")}>
                 {zone.open ? "Open" : "Closed"}
               </div>
             </td>

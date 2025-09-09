@@ -1,5 +1,3 @@
-import { useRouter } from "next/navigation";
-
 export async function fetcher<T>(url: string, options?: RequestInit & { auth?: boolean }): Promise<T> {
   // const headers: Record<string, string> = {
   //   "Content-Type": "application/json",
