@@ -1,6 +1,12 @@
 
-note: I did couldn't implement all requirements but i did *most* part in 18-20 hours total / 3-3.5 hours daily **(as i couldn't spend enough time because of my current full-stack role )**
+notes:  I did couldn't implement all requirements but i did *most* part in 18-20 hours total / 3-3.5 hours daily **(as i couldn't spend enough time because of my current full-stack role )**
+---
 
+## business notes
+- employee accounts must initialy setup the gate inorder for users to use it
+
+
+---
 ## Project Setup
 ### Back-End
 run 
