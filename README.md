@@ -4,7 +4,7 @@ note: couldn't implement all requirements but i did *most* part in 18-20 hours t
 ---
 
 ## business notes
-- employee accounts must initialy setup the gate inorder for users to use it
+- employee accounts must initially setup the gate inorder for users to use it
 
 
 ---
