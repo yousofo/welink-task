@@ -6,6 +6,8 @@ note: couldn't implement all requirements but i did *most* part in 18-20 hours t
 ## business notes
 - employee accounts must initially setup the gate in order for users to use it
 
+## general notes
+- make sure to turn off any 'video speed controller' extension in browser
 
 ---
 ## Project Setup
