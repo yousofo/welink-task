@@ -1,5 +1,5 @@
 
-note: couldn't implement all requirements but i did *most* part in 18-20 hours total / 3-3.5 hours daily **(as i couldn't spend enough time because of my current full-stack role )**
+note: couldn't implement all requirements but i did *most* part in 18-20 hours total / 3-3.5 hours daily **(  i didn't have enough time )**
 
 ---
 
